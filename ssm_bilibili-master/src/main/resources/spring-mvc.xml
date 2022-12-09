@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd  
+       http://www.springframework.org/schema/context  
+       http://www.springframework.org/schema/context/spring-context.xsd  
+       http://www.springframework.org/schema/mvc  
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+    <!-- 配置扫描的包 -->
+    <context:component-scan base-package="com.sf.*"/>
+    <!-- 这个是注解驱动 -->
+    <mvc:annotation-driven/>
+    <mvc:default-servlet-handler/>
+    <!-- 配置视图解析器 -->
+    <bean
+            class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!-- <property name=""></property> 暂时不需要配置 -->
+		<property name="redirectContextRelative" value="true"/>
+		<property name="prefix" value="/WEB-INF/web-jsp/"/>
+		<property name="suffix" value=".jsp"/>
+    </bean>
+    <!-- 加载配置文件 -->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+    <!-- 配置数据源 -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="${driverClassName}"></property>
+        <property name="jdbcUrl" value="${url}"></property>
+        <property name="user" value="${username}"></property>
+        <property name="password" value="${password}"></property>
+        <!-- 最小连接池的大小 -->
+        <property name="minPoolSize" value="1"></property>
+        <!-- 最大 -->
+        <property name="maxPoolSize" value="5"></property>
+        <!-- 刚开始获取多少个链接 -->
+        <property name="initialPoolSize" value="3"></property>
+        <!-- 连接数不够的时候 获取多少条 -->
+        <property name="acquireIncrement" value="1"></property>
+    </bean>
+    <mvc:interceptors>
+        <!-- 国际化操作拦截器 如果采用基于（请求/Session/Cookie）则必需配置 -->
+        <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"/>
+        <!-- 如果不定义 mvc:mapping path 将拦截所有的URL请求 -->
+        <mvc:interceptor>
+            <!-- 扫描所有 -->
+            <mvc:mapping path="/**"/>
+            <!-- 不扫描 -->
+            <mvc:exclude-mapping path="/index.sf"/><!-- 首页 -->
+            <mvc:exclude-mapping path="/logoone.sf"/><!-- 首页 -->
+            <mvc:exclude-mapping path="/login.sf"/><!-- 登录 -->
+            <mvc:exclude-mapping path="/loginservice.sf"/><!-- 登录请求 -->
+            <mvc:exclude-mapping path="/zhuce.sf"/><!-- 注册 -->
+            <mvc:exclude-mapping path="/loginservice.sf"/><!-- 登录 -->
+            <mvc:exclude-mapping path="/messageuser.sf"/><!-- 注册 -->
+            <mvc:exclude-mapping path="/register.sf"/><!-- 注册请求 -->
+            <mvc:exclude-mapping path="/testshabi.sf"/><!-- 详情 -->
+            <mvc:exclude-mapping path="/ajaxtijiao1.sf"/><!-- 分类ajax -->
+            <mvc:exclude-mapping path="/Shopping.sf"/><!-- 商品 -->
+            <mvc:exclude-mapping path="/gridspay.sf"/><!-- 商品详情 -->
+            <mvc:exclude-mapping path="/video.sf"/><!-- 视频播放 -->
+            <mvc:exclude-mapping path="/messageuser.sf"/><!-- 视频播放 -->
+            <mvc:exclude-mapping path="/ajaxTuiJian"/><!-- 论坛 -->
+            <mvc:exclude-mapping path="/forum.sf"/>
+            <mvc:exclude-mapping path="/loginforum.sf"/>
+            <mvc:exclude-mapping path="/forumReply.sf"/>
+            <mvc:exclude-mapping path="/Forum"/>
+            <mvc:exclude-mapping path="/admin.sf"/>
+            <mvc:exclude-mapping path="/Adminbackgroundshipment"/>
+            <mvc:exclude-mapping path="/Shipmentpending"/>
+            <mvc:exclude-mapping path="/Completedorder"/>
+            <mvc:exclude-mapping path="/Returngoods"/>
+            <mvc:exclude-mapping path="/Inquiryorder"/>
+            <mvc:exclude-mapping path="/Houtai.sf"/>
+            <mvc:exclude-mapping path="/userID.sf"/>
+            <mvc:exclude-mapping path="/updateuser.sf"/>
+            <mvc:exclude-mapping path="/updateuse_yue.sf"/>
+
+            <!-- 静态文件 -->
+            <bean class="com.sf.lanjieqi.AuthInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+    <!-- 模板 -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <constructor-arg ref="dataSource"></constructor-arg>
+    </bean>
+</beans>
